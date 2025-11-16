@@ -1,0 +1,17 @@
+{
+  "customerName": "Sergio Hoover",
+  "products": [
+    {
+      "id": 4005,
+      "quantity": 2
+    },
+    {
+      "id": 4004,
+      "quantity": 4
+    },
+    {
+      "id": 1004,
+      "quantity": 4
+    }
+  ]
+}

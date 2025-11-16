@@ -1,0 +1,21 @@
+{
+  "customerName": "Joshua Padilla",
+  "products": [
+    {
+      "id": 2007,
+      "quantity": 7
+    },
+    {
+      "id": 2002,
+      "quantity": 8
+    },
+    {
+      "id": 1006,
+      "quantity": 7
+    },
+    {
+      "id": 4003,
+      "quantity": 9
+    }
+  ]
+}

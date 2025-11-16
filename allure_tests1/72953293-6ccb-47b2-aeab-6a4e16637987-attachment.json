@@ -1,0 +1,21 @@
+{
+  "customerName": "Daniel Walton",
+  "products": [
+    {
+      "id": 2003,
+      "quantity": 5
+    },
+    {
+      "id": 1008,
+      "quantity": 4
+    },
+    {
+      "id": 2002,
+      "quantity": 2
+    },
+    {
+      "id": 2009,
+      "quantity": 8
+    }
+  ]
+}

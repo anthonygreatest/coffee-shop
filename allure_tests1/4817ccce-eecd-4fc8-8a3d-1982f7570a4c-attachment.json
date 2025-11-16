@@ -1,0 +1,16 @@
+{
+  "id": "G9GPRMRXG",
+  "clientId": "306BeMq4Z",
+  "created": "2025-11-16T17:05:54.232Z",
+  "customerName": "Thomas Gonzalez",
+  "products": [
+    {
+      "id": 3007,
+      "quantity": 6
+    },
+    {
+      "id": 2003,
+      "quantity": 5
+    }
+  ]
+}

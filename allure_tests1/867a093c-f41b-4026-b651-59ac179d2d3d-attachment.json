@@ -1,0 +1,20 @@
+{
+  "id": "9MXQNJQPH",
+  "clientId": "306BeMq4Z",
+  "created": "2025-11-16T17:05:58.652Z",
+  "customerName": "Sergio Hoover",
+  "products": [
+    {
+      "id": 4005,
+      "quantity": 2
+    },
+    {
+      "id": 4004,
+      "quantity": 4
+    },
+    {
+      "id": 1004,
+      "quantity": 4
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "id": 1004,
+  "category": "coffee",
+  "name": "Americano",
+  "isAvailable": true,
+  "product-description": "A strong and bold coffee made with a shot of espresso and hot water.",
+  "additionalText": "Contains caffeine"
+}

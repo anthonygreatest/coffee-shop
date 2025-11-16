@@ -1,0 +1,49 @@
+{
+  "totalResults": 10,
+  "currentPage": 1,
+  "totalPages": 2,
+  "products": [
+    {
+      "id": 2001,
+      "category": "cookie",
+      "name": "Chocolate Chip",
+      "isAvailable": true
+    },
+    {
+      "id": 2002,
+      "category": "cookie",
+      "name": "Oatmeal Raisin",
+      "isAvailable": true
+    },
+    {
+      "id": 2003,
+      "category": "cookie",
+      "name": "Peanut Butter",
+      "isAvailable": true
+    },
+    {
+      "id": 2004,
+      "category": "cookie",
+      "name": "White Chocolate Macadamia",
+      "isAvailable": true
+    },
+    {
+      "id": 2005,
+      "category": "cookie",
+      "name": "Snickerdoodle",
+      "isAvailable": true
+    },
+    {
+      "id": 2006,
+      "category": "cookie",
+      "name": "Sugar Cookie",
+      "isAvailable": true
+    },
+    {
+      "id": 2007,
+      "category": "cookie",
+      "name": "Double Chocolate",
+      "isAvailable": true
+    }
+  ]
+}

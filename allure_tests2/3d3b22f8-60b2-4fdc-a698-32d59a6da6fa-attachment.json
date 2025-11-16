@@ -1,0 +1,20 @@
+{
+  "id": "6OIVAU2KT",
+  "clientId": "Ix8RInhLi",
+  "created": "2025-11-16T17:06:54.191Z",
+  "customerName": "Kyle Walker",
+  "products": [
+    {
+      "id": 2003,
+      "quantity": 7
+    },
+    {
+      "id": 1004,
+      "quantity": 3
+    },
+    {
+      "id": 2008,
+      "quantity": 4
+    }
+  ]
+}

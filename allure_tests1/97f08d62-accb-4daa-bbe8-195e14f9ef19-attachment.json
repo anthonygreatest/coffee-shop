@@ -1,0 +1,8 @@
+{
+  "id": 1006,
+  "category": "coffee",
+  "name": "Macchiato",
+  "isAvailable": true,
+  "product-description": "An espresso-based coffee with a small amount of milk froth, known for its strong flavor and smooth texture.",
+  "additionalText": "Contains caffeine, milk"
+}

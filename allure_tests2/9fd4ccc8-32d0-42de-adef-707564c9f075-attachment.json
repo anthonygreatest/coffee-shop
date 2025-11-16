@@ -1,0 +1,16 @@
+{
+  "id": "B0P2PIUQV",
+  "clientId": "Ix8RInhLi",
+  "created": "2025-11-16T17:06:58.642Z",
+  "customerName": "Carol Garcia DVM",
+  "products": [
+    {
+      "id": 2006,
+      "quantity": 5
+    },
+    {
+      "id": 4004,
+      "quantity": 7
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "totalResults": 10,
+  "currentPage": 1,
+  "totalPages": 2,
+  "products": [
+    {
+      "id": 1001,
+      "category": "coffee",
+      "name": "Espresso",
+      "isAvailable": true
+    },
+    {
+      "id": 1002,
+      "category": "coffee",
+      "name": "Cappuccino",
+      "isAvailable": true
+    },
+    {
+      "id": 1003,
+      "category": "coffee",
+      "name": "Latte",
+      "isAvailable": true
+    },
+    {
+      "id": 1004,
+      "category": "coffee",
+      "name": "Americano",
+      "isAvailable": true
+    },
+    {
+      "id": 1005,
+      "category": "coffee",
+      "name": "Mocha",
+      "isAvailable": true
+    },
+    {
+      "id": 1006,
+      "category": "coffee",
+      "name": "Macchiato",
+      "isAvailable": true
+    },
+    {
+      "id": 1007,
+      "category": "coffee",
+      "name": "Cortado",
+      "isAvailable": true
+    }
+  ]
+}

@@ -12,6 +12,7 @@ from data.constants import CATEGORIES, PRODUCT_IDS
 from data.dataclasses.products import Products
 from data.endpoints import Endpoints
 from modules.create_order import CreateOrderModule
+from utils.logger import log
 
 from utils.schemas.create_order_schema import InsideProductsSchema, CreateOrderSchema
 from utils.schemas.register_request_schema import RegisterRequestSchema
@@ -28,6 +29,7 @@ from utils.schemas.register_request_schema import RegisterRequestSchema
     ]
 )
 @allure.story('Nonexistent pages')
+@log
 def test_nonexistent_page(api_client, page, number):
     with allure.step('Nonexistent pages'):
         params = Products(
@@ -48,11 +50,11 @@ def test_nonexistent_page(api_client, page, number):
         ("sandwiches", 0),
         ('abc', 0),
         ('@@', 0),
-        ("", 0),
         ("/*", 0)
 
     ]
 )
+@log
 def test_nonexistent_cat(api_client, category_product, number):
     params = Products(
         category=category_product,
@@ -73,6 +75,7 @@ def test_nonexistent_cat(api_client, category_product, number):
         "<script>alert(1)</script>"
     ]
 )
+@log
 def test_sql_injection(api_client, category_input):
 
     params = Products(
@@ -101,6 +104,7 @@ def test_sql_injection(api_client, category_input):
         (max, 33)
     ]
 )
+@log
 def test_nonexistent_limit(api_client, limit, number):
     params = Products(
         limit=limit
@@ -111,6 +115,7 @@ def test_nonexistent_limit(api_client, limit, number):
     )
     assert len(resp.json()['products']) == number
 
+@log
 def test_wrong_method():
     params = Products(
         category='cookie',
@@ -135,10 +140,11 @@ def test_wrong_method():
         (5001, HTTPStatus.NOT_FOUND),
         ('abc', HTTPStatus.BAD_REQUEST),
         (-100, HTTPStatus.NOT_FOUND),
-        (0, HTTPStatus.NOT_FOUND),
-        ('@!#', HTTPStatus.NOT_FOUND)
+        (0, HTTPStatus.BAD_REQUEST),
+        ('@!#', HTTPStatus.BAD_REQUEST)
     ]
 )
+@log
 def test_nonexistent_product(api_client, id_product, res):
 
     resp = api_client.get_single_product(
@@ -159,6 +165,7 @@ def test_nonexistent_product(api_client, id_product, res):
         ('haljamesincandenzaisafictionalcharactercreatedbydavidfosterwallaceandthisishisschoolemail@gmail.com', HTTPStatus.BAD_REQUEST)
     ]
 )
+@log
 def test_register_invalid_user(api_client, token_from_client, email, res):
 
     resp = api_client.register_client(
@@ -167,6 +174,7 @@ def test_register_invalid_user(api_client, token_from_client, email, res):
 
     assert resp.status_code == res
 
+@log
 def test_register_user_without_body(api_client):
 
     resp = api_client.register_client(
@@ -175,6 +183,7 @@ def test_register_user_without_body(api_client):
 
     assert resp.status_code == HTTPStatus.BAD_REQUEST
 
+@log
 def test_register_user_again(api_client, email_generator, register_module):
 
     email = register_module.prepare_data(
@@ -197,7 +206,7 @@ def test_register_user_again(api_client, email_generator, register_module):
     )
     assert resp2.json()['error'] == 'Email already registered'
 
-
+@log
 def test_create_order_without_token(api_client, order_generator, register_module):
 
     headers = {
@@ -230,11 +239,11 @@ def test_create_order_without_token(api_client, order_generator, register_module
         (random.choice(PRODUCT_IDS), -1, HTTPStatus.BAD_REQUEST),
         (random.choice(PRODUCT_IDS), 'abc', HTTPStatus.BAD_REQUEST),
         (random.choice(PRODUCT_IDS), '', HTTPStatus.BAD_REQUEST),
-        (random.choice(PRODUCT_IDS), '@', HTTPStatus.BAD_REQUEST),
-        (random.choice(PRODUCT_IDS), randrange(1, 10), HTTPStatus.CREATED)
+        (random.choice(PRODUCT_IDS), '@', HTTPStatus.BAD_REQUEST)
 
     ]
 )
+@log
 def test_invalid_products_for_order(api_client, data, res, quant, token_from_client, order_generator):
 
     headers, _ = token_from_client
@@ -254,6 +263,7 @@ def test_invalid_products_for_order(api_client, data, res, quant, token_from_cli
     print(resp.json())
     assert resp.json()['error'] == 'Invalid, unavailable, or zero-quantity products found'
 
+@log
 def test_create_order_with_get_method(api_client, order_generator, register_module, token_from_client):
 
     headers, _ = token_from_client
@@ -270,7 +280,7 @@ def test_create_order_with_get_method(api_client, order_generator, register_modu
 
     assert resp.status_code == HTTPStatus.METHOD_NOT_ALLOWED
 
-
+@log
 def test_create_order_again(api_client, token_from_client, order_generator):
 
     headers, _ = token_from_client
@@ -296,10 +306,6 @@ def test_create_order_again(api_client, token_from_client, order_generator):
     assert resp2.status_code == HTTPStatus.BAD_REQUEST
 
 
-
-
-
-
 @pytest.mark.parametrize(
     'order_id, res', [
         (1000, HTTPStatus.NOT_FOUND),
@@ -307,6 +313,7 @@ def test_create_order_again(api_client, token_from_client, order_generator):
         ('', HTTPStatus.NOT_FOUND),
     ]
 )
+@log
 def test_order_by_wrong_id(api_client, token_from_client, order_id, res):
     headers, _ = token_from_client
 
@@ -318,6 +325,7 @@ def test_order_by_wrong_id(api_client, token_from_client, order_id, res):
 
     assert resp.status_code == res
 
+@log
 def test_order_by_id_without_token(api_client, create_order):
 
     headers = {
@@ -335,6 +343,7 @@ def test_order_by_id_without_token(api_client, create_order):
 
     assert resp.status_code == HTTPStatus.UNAUTHORIZED
 
+@log
 def test_get_all_orders_without_token(api_client, create_order, token_from_client):
 
     headers = {

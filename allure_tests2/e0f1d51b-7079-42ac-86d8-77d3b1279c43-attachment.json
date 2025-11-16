@@ -1,0 +1,13 @@
+{
+  "customerName": "Carol Garcia DVM",
+  "products": [
+    {
+      "id": 2006,
+      "quantity": 5
+    },
+    {
+      "id": 4004,
+      "quantity": 7
+    }
+  ]
+}
