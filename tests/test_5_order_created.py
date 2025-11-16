@@ -1,4 +1,4 @@
-import json
+
 from http import HTTPStatus
 
 from utils.schemas.order_created_schema import InsideOrderCreatedSchema, OrderCreatedSchema
@@ -22,8 +22,6 @@ def test_order_created(create_order, assertion, validation):
 def test_order_fields(create_order, assertion, validation):
 
     clients_request, clients_response, _ = create_order
-
-    # request_data_dict = json.loads(request_data)
 
     assertion.assert_orders_response(
         response=clients_response,

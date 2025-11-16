@@ -3,8 +3,6 @@ import random
 import time
 
 import pytest
-from pygments.lexers.sql import re_prompt
-from unicodedata import category
 
 from data.constants import CATEGORIES
 from data.dataclasses.products import Products
@@ -66,6 +64,10 @@ def email_generator():
 @pytest.fixture(scope='session')
 def register_module():
     return RegisterModule()
+
+@pytest.fixture(scope='session')
+def order_generator():
+    return Generator().order_generator()
 
 @pytest.fixture(scope='session')
 def token_from_client(api_client, email_generator, register_module):

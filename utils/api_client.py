@@ -24,7 +24,7 @@ class APIClient:
             url=f'{self.endpoints.BASE_URL}{self.endpoints.PRODUCTS}/{product_id}'
         )
 
-    def register_client(self, data, headers):
+    def register_client(self, data, headers=None):
         return self.session.post(
             url=f'{self.endpoints.BASE_URL}{self.endpoints.CLIENTS}',
             data=data,

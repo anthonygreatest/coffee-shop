@@ -38,5 +38,5 @@ class Generator:
 #     'customerName': g1.customerName,
 #     'products': [p.__dict__ for p in g1.products]
 # }
-
-
+#
+# print(data)
