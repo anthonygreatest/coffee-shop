@@ -1,0 +1,25 @@
+{
+  "totalResults": 10,
+  "currentPage": 1,
+  "totalPages": 4,
+  "products": [
+    {
+      "id": 1001,
+      "category": "coffee",
+      "name": "Espresso",
+      "isAvailable": true
+    },
+    {
+      "id": 1002,
+      "category": "coffee",
+      "name": "Cappuccino",
+      "isAvailable": true
+    },
+    {
+      "id": 1003,
+      "category": "coffee",
+      "name": "Latte",
+      "isAvailable": true
+    }
+  ]
+}

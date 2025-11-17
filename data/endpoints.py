@@ -1,10 +1,9 @@
-from enum import Enum
+
 from urllib.parse import urlencode
 
-import pytest
 
 
-class Endpoints():
+class Endpoints:
 
     BASE_URL = 'https://valentinos-coffee.herokuapp.com'
     PRODUCTS = '/products'

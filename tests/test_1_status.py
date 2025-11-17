@@ -20,5 +20,5 @@ def test_status(api_client, assertion, validation):
             expected=HTTPStatus.OK
         )
 
-        print(resp.json())
+        assert resp.json()['status'] == "API is up and running"
 

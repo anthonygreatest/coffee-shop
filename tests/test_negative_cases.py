@@ -11,6 +11,7 @@ from data.constants import CATEGORIES, PRODUCT_IDS
 
 from data.dataclasses.products import Products
 from data.endpoints import Endpoints
+from data.generator.generator import Generator
 from modules.create_order import CreateOrderModule
 from utils.logger import log
 
@@ -25,7 +26,8 @@ from utils.schemas.register_request_schema import RegisterRequestSchema
         (-100, 0),
         ('abc', 0),
         (9999999, 0),
-        (1, 10)
+        (1, 10),
+        ('!@', 0)
     ]
 )
 @allure.story('Nonexistent pages')
@@ -50,7 +52,8 @@ def test_nonexistent_page(api_client, page, number):
         ("sandwiches", 0),
         ('abc', 0),
         ('@@', 0),
-        ("/*", 0)
+        ("/*", 0),
+        ('pastry', 7)
 
     ]
 )
@@ -101,7 +104,7 @@ def test_sql_injection(api_client, category_input):
         (33, 33),
         (9999999, 0),
         (1, 1),
-        (max, 33)
+        (max, 10)
     ]
 )
 @log
@@ -116,7 +119,7 @@ def test_nonexistent_limit(api_client, limit, number):
     assert len(resp.json()['products']) == number
 
 @log
-def test_wrong_method():
+def test_all_products_wrong_method():
     params = Products(
         category='cookie',
         limit=1,
@@ -125,7 +128,6 @@ def test_wrong_method():
 
     params2 = {key: value for key, value in params.__dict__.items()}
 
-    print(params)
     resp = requests.post(
         url=f'{Endpoints().BASE_URL}{Endpoints().PRODUCTS}',
         data=json.dumps(params2)
@@ -153,6 +155,14 @@ def test_nonexistent_product(api_client, id_product, res):
 
     assert resp.status_code == res
 
+@log
+def test_single_product_wrong_method():
+
+    resp = requests.post(
+        url = f'{Endpoints().BASE_URL}{Endpoints().PRODUCTS}/{random.choice(PRODUCT_IDS)}',
+    )
+
+    assert resp.status_code == HTTPStatus.NOT_FOUND
 
 @pytest.mark.parametrize(
     'email, res', [
@@ -162,7 +172,7 @@ def test_nonexistent_product(api_client, id_product, res):
         ('', HTTPStatus.BAD_REQUEST),
         ('@!walter', HTTPStatus.BAD_REQUEST),
         (True, HTTPStatus.BAD_REQUEST),
-        ('haljamesincandenzaisafictionalcharactercreatedbydavidfosterwallaceandthisishisschoolemail@gmail.com', HTTPStatus.BAD_REQUEST)
+        (Generator().generate_long_email(), HTTPStatus.BAD_REQUEST)
     ]
 )
 @log
@@ -207,6 +217,27 @@ def test_register_user_again(api_client, email_generator, register_module):
     assert resp2.json()['error'] == 'Email already registered'
 
 @log
+def test_register_user_wrong_method(email_generator, register_module):
+
+    email = register_module.prepare_data(
+        data=email_generator,
+        schema=RegisterRequestSchema
+    )
+
+    headers = {
+         'Content-Type': 'application/json'
+    }
+
+    resp = requests.get(
+        url=f'{Endpoints().BASE_URL}{Endpoints().CLIENTS}',
+        data=email,
+        headers=headers
+    )
+
+    assert resp.status_code == HTTPStatus.NOT_FOUND
+
+
+@log
 def test_create_order_without_token(api_client, order_generator, register_module):
 
     headers = {
@@ -235,11 +266,13 @@ def test_create_order_without_token(api_client, order_generator, register_module
         ('abc', randrange(1, 10), HTTPStatus.BAD_REQUEST),
         ('', randrange(1, 10), HTTPStatus.BAD_REQUEST),
         ("a", randrange(1, 10), HTTPStatus.BAD_REQUEST),
+        ('@', randrange(1, 10), HTTPStatus.BAD_REQUEST),
         (random.choice(PRODUCT_IDS), 0, HTTPStatus.BAD_REQUEST),
         (random.choice(PRODUCT_IDS), -1, HTTPStatus.BAD_REQUEST),
         (random.choice(PRODUCT_IDS), 'abc', HTTPStatus.BAD_REQUEST),
         (random.choice(PRODUCT_IDS), '', HTTPStatus.BAD_REQUEST),
-        (random.choice(PRODUCT_IDS), '@', HTTPStatus.BAD_REQUEST)
+        (random.choice(PRODUCT_IDS), '@', HTTPStatus.BAD_REQUEST),
+        (random.choice(PRODUCT_IDS), randrange(1, 10), HTTPStatus.CREATED)
 
     ]
 )
@@ -306,11 +339,118 @@ def test_create_order_again(api_client, token_from_client, order_generator):
     assert resp2.status_code == HTTPStatus.BAD_REQUEST
 
 
+@log
+def test_create_order_wrong_method(token_from_client, order_generator):
+
+    headers, _ = token_from_client
+
+    body_to_send = {
+        "customerName": order_generator.customerName,
+        "products": [{
+            "id": random.choice(PRODUCT_IDS),
+            "quantity": randrange(1, 10)
+        }]
+    }
+
+    resp = requests.get(
+        url=f'{Endpoints().BASE_URL}{Endpoints().ORDERS}',
+        data=json.dumps(body_to_send),
+        headers=headers
+    )
+
+    assert resp.status_code == HTTPStatus.METHOD_NOT_ALLOWED
+
+
+@pytest.mark.parametrize('name, res',
+        [('tony', HTTPStatus.CREATED),
+        (12345, HTTPStatus.BAD_REQUEST),
+        ('', HTTPStatus.BAD_REQUEST),
+        ('@!walter', HTTPStatus.BAD_REQUEST),
+        (True, HTTPStatus.BAD_REQUEST),
+        (Generator().generate_long_name(), HTTPStatus.BAD_REQUEST)
+    ]
+)
+@log
+def test_create_order_invalid_name(api_client, token_from_client, name, res):
+
+    headers, _ = token_from_client
+
+    body_to_send = {
+        "customerName": name,
+        "products": [{
+            "id": random.choice(PRODUCT_IDS),
+            "quantity": randrange(1, 10)
+        }]
+    }
+
+    resp = api_client.create_order(
+        headers=headers,
+        data=json.dumps(body_to_send)
+    )
+
+    assert resp.status_code == res
+
+
+def test_create_order_without_product_ids(token_from_client, order_generator, api_client):
+
+    headers, _ = token_from_client
+
+    body_to_send = {
+        "customerName": order_generator.customerName,
+        "products": [{
+            "quantity": randrange(1, 10)
+        }]
+    }
+
+    resp = api_client.create_order(
+        headers=headers,
+        data=json.dumps(body_to_send)
+    )
+
+    assert resp.status_code == HTTPStatus.BAD_REQUEST
+
+
+
+def test_create_order_without_products(token_from_client, order_generator, api_client):
+
+    headers, _ = token_from_client
+
+    body_to_send = {
+        "customerName": order_generator.customerName
+    }
+
+    resp = api_client.create_order(
+        headers=headers,
+        data=json.dumps(body_to_send)
+    )
+
+    assert resp.status_code == HTTPStatus.BAD_REQUEST
+
+
+def test_create_order_without_product_quantity(token_from_client, order_generator, api_client):
+
+    headers, _ = token_from_client
+
+    body_to_send = {
+        "customerName": order_generator.customerName,
+        "products": [{
+            "id": random.choice(PRODUCT_IDS)
+        }]
+    }
+
+    resp = api_client.create_order(
+        headers=headers,
+        data=json.dumps(body_to_send)
+    )
+
+    assert resp.status_code == HTTPStatus.BAD_REQUEST
+
 @pytest.mark.parametrize(
     'order_id, res', [
         (1000, HTTPStatus.NOT_FOUND),
         ('abc', HTTPStatus.NOT_FOUND),
         ('', HTTPStatus.NOT_FOUND),
+        ('@!', HTTPStatus.NOT_FOUND),
     ]
 )
 @log

@@ -31,6 +31,18 @@ class Generator:
             products=products
         )
 
+    def generate_long_email(self):
+
+        email_text = (self.fake.text(max_nb_chars=200).replace(' ', '').replace('.', '_').replace('\n', '').rstrip('_')).lower()
+
+        return f'{email_text}@{self.fake.domain_name()}'
+
+    def generate_long_name(self):
+
+        return self.fake.text(max_nb_chars=200).replace(' ', '').replace('.', '_').replace('\n', '').rstrip('_').lower()
+
+# d1 = Generator().generate_long_name()
+# print(d1)
 
 # g1 = Generator().order_generator()
 #

@@ -134,10 +134,6 @@ def create_order(api_client, token_from_client):
 
     clients_request.sort(key=lambda x: order.index(x['customerName']))
 
-
-
-    print(clients_request, clients_response)
-
     return clients_request, clients_response, status_codes
 
 @pytest.fixture(scope='session')

@@ -1,0 +1,8 @@
+{
+  "id": 1001,
+  "category": "coffee",
+  "name": "Espresso",
+  "isAvailable": true,
+  "product-description": "A rich, dark, and full-bodied coffee with a bold flavor and intense aroma.",
+  "additionalText": "Contains caffeine"
+}
