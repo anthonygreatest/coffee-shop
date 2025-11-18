@@ -6,6 +6,7 @@ import pytest
 
 from data.constants import CATEGORIES
 from data.dataclasses.products import Products
+from data.generator.builder import OrderBuilder
 from data.generator.generator import Generator
 from modules.create_order import CreateOrderModule
 from modules.register_client import RegisterModule
@@ -109,6 +110,8 @@ def create_order(api_client, token_from_client):
             'products': [p.__dict__ for p in order_from_customer.products]
         }
 
+        # order_data = OrderBuilder().build()
+
         final_data = CreateOrderModule().data_molder(
             data=order_data,
             schema=CreateOrderSchema,
@@ -133,6 +136,8 @@ def create_order(api_client, token_from_client):
     order = [item['customerName'] for item in clients_response]
 
     clients_request.sort(key=lambda x: order.index(x['customerName']))
+
+    print(clients_request)
 
     return clients_request, clients_response, status_codes
 

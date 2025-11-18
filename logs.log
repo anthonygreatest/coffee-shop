@@ -116,3 +116,19 @@
  +  where 201 = <Response [201]>.status_code
 2025-11-17 | ERROR | Error in test_order_by_wrong_id : assert 200 == <HTTPStatus.NOT_FOUND: 404>
  +  where 200 = <Response [200]>.status_code
+2025-11-18 | ERROR | Error in test_create_order_invalid_name : assert 500 == <HTTPStatus.BAD_REQUEST: 400>
+ +  where 500 = <Response [500]>.status_code
+2025-11-18 | ERROR | Error in test_create_order_invalid_name : assert 201 == <HTTPStatus.BAD_REQUEST: 400>
+ +  where 201 = <Response [201]>.status_code
+2025-11-18 | ERROR | Error in test_create_order_invalid_name : assert 500 == <HTTPStatus.BAD_REQUEST: 400>
+ +  where 500 = <Response [500]>.status_code
+2025-11-18 | ERROR | Error in test_create_order_invalid_name : assert 201 == <HTTPStatus.BAD_REQUEST: 400>
+ +  where 201 = <Response [201]>.status_code
+2025-11-18 | ERROR | Error in test_create_order_invalid_name : assert 500 == <HTTPStatus.BAD_REQUEST: 400>
+ +  where 500 = <Response [500]>.status_code
+2025-11-18 | ERROR | Error in test_create_order_invalid_name : assert 201 == <HTTPStatus.BAD_REQUEST: 400>
+ +  where 201 = <Response [201]>.status_code
+2025-11-18 | ERROR | Error in test_create_order_invalid_name : assert 500 == <HTTPStatus.BAD_REQUEST: 400>
+ +  where 500 = <Response [500]>.status_code
+2025-11-18 | ERROR | Error in test_create_order_invalid_name : assert 201 == <HTTPStatus.BAD_REQUEST: 400>
+ +  where 201 = <Response [201]>.status_code

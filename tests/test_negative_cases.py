@@ -11,6 +11,7 @@ from data.constants import CATEGORIES, PRODUCT_IDS
 
 from data.dataclasses.products import Products
 from data.endpoints import Endpoints
+from data.generator.builder import OrderBuilder
 from data.generator.generator import Generator
 from modules.create_order import CreateOrderModule
 from utils.logger import log
@@ -375,13 +376,15 @@ def test_create_order_invalid_name(api_client, token_from_client, name, res):
 
     headers, _ = token_from_client
 
-    body_to_send = {
-        "customerName": name,
-        "products": [{
-            "id": random.choice(PRODUCT_IDS),
-            "quantity": randrange(1, 10)
-        }]
-    }
+    # body_to_send = {
+    #     "customerName": name,
+    #     "products": [{
+    #         "id": random.choice(PRODUCT_IDS),
+    #         "quantity": randrange(1, 10)
+    #     }]
+    # }
+
+    body_to_send = OrderBuilder().your_name(name).build()
 
     resp = api_client.create_order(
         headers=headers,

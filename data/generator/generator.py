@@ -2,10 +2,11 @@
 from random import random, randrange
 import random
 
+import faker
 from faker import Faker
 
 
-from data.constants import PRODUCT_IDS
+from data.constants import PRODUCT_IDS, CATEGORIES
 from data.dataclasses.client import Client
 from data.dataclasses.order import Order, ListProducts
 
@@ -52,3 +53,4 @@ class Generator:
 # }
 #
 # print(data)
+
