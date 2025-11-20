@@ -1,8 +1,10 @@
 import json
 import random
 import time
+from datetime import datetime
 
 import pytest
+from sqlalchemy import text
 
 from data.constants import CATEGORIES
 from data.dataclasses.products import Products
@@ -12,11 +14,13 @@ from modules.create_order import CreateOrderModule
 from modules.register_client import RegisterModule
 from utils.api_client import APIClient
 from utils.assertions import Assertions
+from utils.db import Session
 from utils.schemas.create_order_schema import InsideProductsSchema, CreateOrderSchema
 from utils.schemas.register_request_schema import RegisterRequestSchema
+from utils.tables import Clients, OrderItems, Orders
 from utils.validator import Validations
 from random import randrange
-
+from utils.db import add_to_db
 
 
 @pytest.fixture(scope='session')
@@ -71,7 +75,7 @@ def order_generator():
     return Generator().order_generator()
 
 @pytest.fixture(scope='session')
-def token_from_client(api_client, email_generator, register_module):
+def token_from_client(api_client, email_generator, register_module, get_db_session, add_data_to_db):
 
     email = register_module.prepare_data(
         data=email_generator,
@@ -82,19 +86,34 @@ def token_from_client(api_client, email_generator, register_module):
          'Content-Type': 'application/json'
     }
 
+    get_db_session.execute(text('DELETE FROM order_items'))
+    get_db_session.execute(text('DELETE FROM orders'))
+    get_db_session.execute(text('DELETE FROM clients'))
+    get_db_session.commit()
+
     resp = api_client.register_client(
         data=email,
         headers=headers
     )
 
+    clients_to_db = {
+        'email': json.loads(email)['email'],
+        'token': resp.json()['token'],
+        'created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    }
+
+    item = Clients(**clients_to_db)
+    add_data_to_db(get_db_session, item)
+
     headers['x-api-key'] = resp.json()['token']
 
-    return headers, resp
+
+    return headers, resp, clients_to_db
 
 @pytest.fixture(scope='session')
-def create_order(api_client, token_from_client):
+def create_order(api_client, token_from_client, add_data_to_db, get_db_session):
 
-    headers, _ = token_from_client
+    headers, _, _ = token_from_client
 
     num_clients = randrange(1, 5)
 
@@ -102,7 +121,13 @@ def create_order(api_client, token_from_client):
     clients_response = []
     status_codes = []
 
-    for _ in range(num_clients):
+    get_db_session.execute(text('DELETE FROM order_items'))
+    get_db_session.commit()
+    get_db_session.execute(text('DELETE FROM orders'))
+    get_db_session.commit()
+
+
+    for i in range(num_clients):
         order_from_customer = Generator().order_generator()
 
         order_data = {
@@ -125,6 +150,32 @@ def create_order(api_client, token_from_client):
             headers=headers
         )
 
+        slovar = json.loads(final_data)
+
+        order_id = resp.json()
+
+        customer_name = slovar['customerName']
+
+        name_order_to_db = Orders(
+            customer_name=customer_name,
+            id=order_id['id'],
+            token=headers['x-api-key'],
+            clientId=order_id['clientId']
+        )
+
+        add_data_to_db(get_db_session, name_order_to_db)
+
+        for i in slovar['products']:
+            id = i['id']
+            quant = i['quantity']
+            make_order_to_db = OrderItems(
+            product_id=id,
+            quantity=quant,
+            order_id=order_id['id'],
+            created=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+
+            add_data_to_db(get_db_session, make_order_to_db)
+
         clients_response.append(resp.json())
 
         status_codes.append(resp.status_code)
@@ -137,20 +188,38 @@ def create_order(api_client, token_from_client):
 
     clients_request.sort(key=lambda x: order.index(x['customerName']))
 
-    print(clients_request)
-
     return clients_request, clients_response, status_codes
 
 @pytest.fixture(scope='session')
 def get_all_orders(api_client, token_from_client):
 
-    headers, _ = token_from_client
+    headers, _, _ = token_from_client
 
     resp = api_client.get_all_orders(
         headers=headers
     )
 
     return resp
+
+
+@pytest.fixture(scope='session')
+def get_db_session():
+    session = Session()
+    try:
+        yield session
+    except:
+        session.close()
+
+
+@pytest.fixture(scope='session')
+def add_data_to_db():
+    return add_to_db
+
+# @pytest.fixture(scope='session')
+# def delete_data_from_db():
+#     return delete_from_db
+
+
 
 
 

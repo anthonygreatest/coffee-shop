@@ -4,11 +4,15 @@ from http import HTTPStatus
 
 import allure
 
+from tests.conftest import get_db_session
+from tests.helpers import tuple_handler
 from utils.schemas.order_created_schema import OrderCreatedSchema, InsideOrderCreatedSchema
+from utils.tables import Orders, OrderItems
+
 
 @allure.story('Getting order by ID')
 def test_get_order_by_id(api_client, create_order, token_from_client, assertion, validation):
-    headers, _ = token_from_client
+    headers, _, _ = token_from_client
 
     _, clients_response, _ = create_order
 
@@ -37,8 +41,8 @@ def test_get_order_by_id(api_client, create_order, token_from_client, assertion,
     )
 
 @allure.story('Getting order by ID')
-def test_get_order_by_id_status_code(api_client, create_order, token_from_client, assertion):
-    headers, _ = token_from_client
+def test_get_order_by_id_status_code(api_client, create_order, token_from_client, assertion, get_db_session):
+    headers, _, _ = token_from_client
 
     _, clients_response, _ = create_order
 
@@ -48,6 +52,7 @@ def test_get_order_by_id_status_code(api_client, create_order, token_from_client
         id=resp_from_orders['id'],
         headers=headers
     )
+
 
     assertion.assert_response_status_code(
         response=resp,
@@ -60,3 +65,24 @@ def test_get_order_by_id_status_code(api_client, create_order, token_from_client
         name='Response code: order selected by ID',
         attachment_type=allure.attachment_type.TEXT
     )
+
+
+def test_get_order_from_db(api_client, create_order, token_from_client, assertion, get_db_session):
+    headers, _, _ = token_from_client
+
+    _, clients_response, _ = create_order
+
+    resp_from_orders = random.choice(clients_response)
+
+    resp = api_client.get_order_by_id(
+        id=resp_from_orders['id'],
+        headers=headers
+    )
+
+    order_in_bd = (get_db_session.query(OrderItems.order_id, Orders.clientId, OrderItems.created, Orders.customer_name, OrderItems.product_id, OrderItems.quantity).
+                         join(OrderItems, Orders.id == OrderItems.order_id).filter(Orders.id == resp_from_orders['id']).order_by('created').all())
+
+    order_to_check = tuple_handler(order_in_bd)[0]
+
+    assertion.assert_orders_response(resp, order_to_check)
+    print(resp.json())

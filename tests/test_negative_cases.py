@@ -280,7 +280,7 @@ def test_create_order_without_token(api_client, order_generator, register_module
 @log
 def test_invalid_products_for_order(api_client, data, res, quant, token_from_client, order_generator):
 
-    headers, _ = token_from_client
+    headers, _, _ = token_from_client
 
     body_to_send = {
         "customerName":order_generator.customerName,
@@ -295,12 +295,12 @@ def test_invalid_products_for_order(api_client, data, res, quant, token_from_cli
         headers=headers
     )
     print(resp.json())
-    assert resp.json()['error'] == 'Invalid, unavailable, or zero-quantity products found'
+    assert resp.status_code == res
 
 @log
 def test_create_order_with_get_method(api_client, order_generator, register_module, token_from_client):
 
-    headers, _ = token_from_client
+    headers, _, _ = token_from_client
 
     data = {
         'customerName': order_generator.customerName,
@@ -317,7 +317,7 @@ def test_create_order_with_get_method(api_client, order_generator, register_modu
 @log
 def test_create_order_again(api_client, token_from_client, order_generator):
 
-    headers, _ = token_from_client
+    headers, _, _ = token_from_client
 
     body_to_send = {
         "customerName": order_generator.customerName,
@@ -343,7 +343,7 @@ def test_create_order_again(api_client, token_from_client, order_generator):
 @log
 def test_create_order_wrong_method(token_from_client, order_generator):
 
-    headers, _ = token_from_client
+    headers, _, _ = token_from_client
 
     body_to_send = {
         "customerName": order_generator.customerName,
@@ -374,7 +374,7 @@ def test_create_order_wrong_method(token_from_client, order_generator):
 @log
 def test_create_order_invalid_name(api_client, token_from_client, name, res):
 
-    headers, _ = token_from_client
+    headers, _, _ = token_from_client
 
     # body_to_send = {
     #     "customerName": name,
@@ -396,7 +396,7 @@ def test_create_order_invalid_name(api_client, token_from_client, name, res):
 
 def test_create_order_without_product_ids(token_from_client, order_generator, api_client):
 
-    headers, _ = token_from_client
+    headers, _, _ = token_from_client
 
     body_to_send = {
         "customerName": order_generator.customerName,
@@ -416,7 +416,7 @@ def test_create_order_without_product_ids(token_from_client, order_generator, ap
 
 def test_create_order_without_products(token_from_client, order_generator, api_client):
 
-    headers, _ = token_from_client
+    headers, _, _ = token_from_client
 
     body_to_send = {
         "customerName": order_generator.customerName
@@ -432,7 +432,7 @@ def test_create_order_without_products(token_from_client, order_generator, api_c
 
 def test_create_order_without_product_quantity(token_from_client, order_generator, api_client):
 
-    headers, _ = token_from_client
+    headers, _, _ = token_from_client
 
     body_to_send = {
         "customerName": order_generator.customerName,
@@ -458,7 +458,7 @@ def test_create_order_without_product_quantity(token_from_client, order_generato
 )
 @log
 def test_order_by_wrong_id(api_client, token_from_client, order_id, res):
-    headers, _ = token_from_client
+    headers, _, _ = token_from_client
 
     resp = api_client.get_order_by_id(
         id=order_id,
