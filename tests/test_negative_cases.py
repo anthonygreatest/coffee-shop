@@ -6,6 +6,7 @@ from random import randrange
 import allure
 import pytest
 import requests
+from sqlalchemy import text
 
 from data.constants import CATEGORIES, PRODUCT_IDS
 
@@ -487,7 +488,7 @@ def test_order_by_id_without_token(api_client, create_order):
     assert resp.status_code == HTTPStatus.UNAUTHORIZED
 
 @log
-def test_get_all_orders_without_token(api_client, create_order, token_from_client):
+def test_get_all_orders_without_token(api_client, create_order, token_from_client, get_db_session):
 
     headers = {
         'Content-Type': 'application/json'
@@ -496,6 +497,11 @@ def test_get_all_orders_without_token(api_client, create_order, token_from_clien
     resp = api_client.get_all_orders(
         headers=headers
     )
+
+    get_db_session.execute(text('DELETE FROM order_items'))
+    get_db_session.execute(text('DELETE FROM orders'))
+    get_db_session.execute(text('DELETE FROM clients'))
+    get_db_session.commit()
 
     assert resp.status_code == HTTPStatus.UNAUTHORIZED
 

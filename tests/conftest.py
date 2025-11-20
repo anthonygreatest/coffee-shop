@@ -207,17 +207,13 @@ def get_db_session():
     session = Session()
     try:
         yield session
-    except:
+    finally:
         session.close()
 
 
 @pytest.fixture(scope='session')
 def add_data_to_db():
     return add_to_db
-
-# @pytest.fixture(scope='session')
-# def delete_data_from_db():
-#     return delete_from_db
 
 
 
