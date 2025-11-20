@@ -101,7 +101,7 @@ def tuple_handler(resp):
 #
 # print(tuple_handler(resp))
 
-resp = [('3KMS1E-N7', datetime(2025, 11, 20, 1, 12, 13), 'Christina Stephens'), ('3KMS1E-N7', datetime(2025, 11, 20, 1, 12, 13), 'Christina Stephens'), ('DBC--LAFO', datetime(2025, 11, 20, 1, 0, 44), 'Kenneth Barrett')]
+# resp = [('3KMS1E-N7', datetime(2025, 11, 20, 1, 12, 13), 'Christina Stephens'), ('3KMS1E-N7', datetime(2025, 11, 20, 1, 12, 13), 'Christina Stephens'), ('DBC--LAFO', datetime(2025, 11, 20, 1, 0, 44), 'Kenneth Barrett')]
 
 def tuple_handler2(resp):
 
@@ -126,4 +126,15 @@ def tuple_handler2(resp):
             data.append(order)
     return data
 
-print(tuple_handler2(resp))
+# print(tuple_handler2(resp))
+
+
+# from kafka.admin import KafkaAdminClient, NewTopic
+#
+# admin_client = KafkaAdminClient(bootstrap_servers="localhost:9092")
+#
+# topic_list = [NewTopic(name="orders_at_coffee_shop", num_partitions=1, replication_factor=1)]
+# admin_client.create_topics(new_topics=topic_list, validate_only=False)
+#
+# print("Топик создан")
+

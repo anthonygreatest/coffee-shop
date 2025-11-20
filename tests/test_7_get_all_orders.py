@@ -33,7 +33,7 @@ def test_get_all_orders(get_all_orders, create_order, validation, get_db_session
         assert clients_response[i]['id'] == get_all_orders[i]['id']
 
 
-@allure.story('Getting all orders')
+
 def test_get_all_orders_from_db(get_all_orders, create_order, validation, get_db_session):
 
     _, clients_response, _ = create_order

@@ -1,7 +1,8 @@
-import json
+
 import random
 import time
 from datetime import datetime
+from uuid import uuid4
 
 import pytest
 from sqlalchemy import text
@@ -21,6 +22,8 @@ from utils.tables import Clients, OrderItems, Orders
 from utils.validator import Validations
 from random import randrange
 from utils.db import add_to_db
+from kafka import KafkaProducer, KafkaConsumer
+import json
 
 
 @pytest.fixture(scope='session')
@@ -111,7 +114,7 @@ def token_from_client(api_client, email_generator, register_module, get_db_sessi
     return headers, resp, clients_to_db
 
 @pytest.fixture(scope='session')
-def create_order(api_client, token_from_client, add_data_to_db, get_db_session):
+def create_order(api_client, token_from_client, add_data_to_db, get_db_session, kafka_producer):
 
     headers, _, _ = token_from_client
 
@@ -176,6 +179,13 @@ def create_order(api_client, token_from_client, add_data_to_db, get_db_session):
 
             add_data_to_db(get_db_session, make_order_to_db)
 
+        kafka_producer.send(
+            'orders_at_coffee_shop',
+            value=resp.json()
+        )
+
+        kafka_producer.flush()
+
         clients_response.append(resp.json())
 
         status_codes.append(resp.status_code)
@@ -214,6 +224,29 @@ def get_db_session():
 @pytest.fixture(scope='session')
 def add_data_to_db():
     return add_to_db
+
+
+@pytest.fixture(scope='session')
+def kafka_producer():
+    producer = KafkaProducer(
+        bootstrap_servers='localhost:9092',
+        value_serializer=lambda v: json.dumps(v).encode('utf-8')
+    )
+    yield producer
+    producer.close()
+
+
+@pytest.fixture(scope='session')
+def kafka_consumer():
+    consumer = KafkaConsumer(
+        'orders_at_coffee_shop',
+        bootstrap_servers='localhost:9092',
+        auto_offset_reset='earliest',
+        value_deserializer=lambda m: json.loads(m.decode('utf-8')),
+        enable_auto_commit=True
+    )
+    yield consumer
+    consumer.close()
 
 
 

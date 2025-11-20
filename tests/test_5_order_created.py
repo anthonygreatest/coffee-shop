@@ -70,6 +70,28 @@ def test_orders_added_to_db(create_order, get_db_session, assertion):
     print(resp_from_db)
     print(clients_response)
 
+
+def test_orders_in_kafka(create_order, kafka_consumer):
+
+    clients_request, clients_response, _ = create_order
+
+    messages = []
+    while True:
+        msg = kafka_consumer.poll(timeout_ms=300)
+        if not msg:  # пустой словарь {}
+            break
+        for _, records in msg.items():
+            for record in records:
+                messages.append(record.value)
+
+    for item in clients_response:
+        assert item in messages
+        print(item)
+
+    print(messages)
+
+
+
 # def test_delete_order_from_db(create_order, get_db_session, assertion): необязательный т.к нет ручки
 #
 #     clients_request, clients_response, _ = create_order
