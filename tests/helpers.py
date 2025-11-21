@@ -125,7 +125,7 @@ def tuple_handler2(resp):
 
             data.append(order)
     return data
-
+#
 # print(tuple_handler2(resp))
 
 
@@ -133,8 +133,8 @@ def tuple_handler2(resp):
 #
 # admin_client = KafkaAdminClient(bootstrap_servers="localhost:9092")
 #
-# topic_list = [NewTopic(name="orders_at_coffee_shop", num_partitions=1, replication_factor=1)]
+# topic_list = [NewTopic(name="register_clients_at_coffee_shop", num_partitions=1, replication_factor=1)]
 # admin_client.create_topics(new_topics=topic_list, validate_only=False)
 #
 # print("Топик создан")
-
+#

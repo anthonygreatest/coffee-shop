@@ -2,6 +2,7 @@
 import random
 import time
 from datetime import datetime
+from pydoc_data.topics import topics
 from uuid import uuid4
 
 import pytest
@@ -78,7 +79,7 @@ def order_generator():
     return Generator().order_generator()
 
 @pytest.fixture(scope='session')
-def token_from_client(api_client, email_generator, register_module, get_db_session, add_data_to_db):
+def token_from_client(api_client, email_generator, register_module, get_db_session, add_data_to_db, kafka_producer):
 
     email = register_module.prepare_data(
         data=email_generator,
@@ -98,6 +99,13 @@ def token_from_client(api_client, email_generator, register_module, get_db_sessi
         data=email,
         headers=headers
     )
+
+    kafka_producer.send(
+        'register_clients_at_coffee_shop',
+        value=json.loads(email)['email']
+    )
+
+    kafka_producer.flush()
 
     clients_to_db = {
         'email': json.loads(email)['email'],
@@ -238,15 +246,16 @@ def kafka_producer():
 
 @pytest.fixture(scope='session')
 def kafka_consumer():
-    consumer = KafkaConsumer(
-        'orders_at_coffee_shop',
-        bootstrap_servers='localhost:9092',
-        auto_offset_reset='earliest',
-        value_deserializer=lambda m: json.loads(m.decode('utf-8')),
-        enable_auto_commit=True
-    )
-    yield consumer
-    consumer.close()
+    def _create_consumer(topic: str):
+        consumer = KafkaConsumer(
+            topic,
+            bootstrap_servers='localhost:9092',
+            auto_offset_reset='earliest',
+            value_deserializer=lambda m: json.loads(m.decode('utf-8')),
+            enable_auto_commit=True
+        )
+        return consumer
+    return _create_consumer
 
 
 

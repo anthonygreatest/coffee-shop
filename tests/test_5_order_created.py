@@ -76,8 +76,11 @@ def test_orders_in_kafka(create_order, kafka_consumer):
     clients_request, clients_response, _ = create_order
 
     messages = []
+
+    consumer = kafka_consumer('orders_at_coffee_shop')
+
     while True:
-        msg = kafka_consumer.poll(timeout_ms=300)
+        msg = consumer.poll(timeout_ms=300)
         if not msg:  # пустой словарь {}
             break
         for _, records in msg.items():
